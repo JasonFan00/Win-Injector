@@ -1,10 +1,12 @@
 //  Dll injector w/ LoadLibrary
 
 #include <iostream>
+#include <string>
 #include <Windows.h>
 #include <Shlwapi.h>
 #include <TlHelp32.h>
 #include <Winnt.h>
+#include <tchar.h>
 
 
 DWORD get_pID();
@@ -73,28 +75,28 @@ DWORD get_pID()
 //  Prompt path of DLL from user
 LPCSTR promptDllPath()
 {
+	std::cin.ignore();
 	std::string path;
-	std::cout << "Enter the full path of your dll: ";  // C:Documents/... , NOT the path given to you by explorer.  Why?
-													   
-	std::cin >> path;
-	
+	std::cout << "Enter the full path of your dll: "; 										   
+	std::getline(std::cin, path);
+
 	LPCSTR ext = PathFindExtensionA(path.c_str());
+	std::cout << "Path: " << path.c_str() << " Ext: " << ext << std::endl;
 	DWORD err = GetLastError();
-	while (err > 0 || strcmp(ext, FILE_EX_TYPE) || !PathFileExistsA(ext))
+	while (err > 0 || strcmp(ext, FILE_EX_TYPE) || !PathFileExistsA(path.c_str())) //  Some wonky stuff can happen here in testing
 	{
+		std::cout << "Please re-enter: ";
 		err = GetLastError();
 		if (err == ERROR_FILE_NOT_FOUND) //  Make sure a file can be found
 		{
-			std::cout << "Unable to find file";
+			std::cout << "Unable to find file, "; 
 		}
 		if (strcmp(ext, FILE_EX_TYPE))  //  Make sure file extension type matches with .dll
 		{
 			std::cout << "File extension must end with [" << FILE_EX_TYPE << "], Your extension: " << ext << " ";
 		}
-		std::cout << "Please re-enter: ";
-		std::cin >> path;
+		std::getline(std::cin, path);
 	}
-	std::cout << "Path: " << path.c_str() << std::endl;
 	return path.c_str();
 }
 
