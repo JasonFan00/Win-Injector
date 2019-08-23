@@ -26,7 +26,7 @@ int main()
 	LPCSTR dllPath;
 	//  Open handle towards target process
 	hProc = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE, NULL, get_pID());
-	if (hProc == INVALID_HANDLE_VALUE)
+	if (hProc == NULL)
 	{
 		std::cout << "Unable to get handle for process" << std::endl;
 		return 1;
@@ -75,7 +75,7 @@ DWORD get_pID()
 //  Prompt path of DLL from user
 LPCSTR promptDllPath()
 {
-	std::cin.ignore();
+	std::cin.ignore();  //  Clear out any characters left from previous cin (\n)
 	std::string path;
 	std::cout << "Enter the full path of your dll: "; 										   
 	std::getline(std::cin, path);
